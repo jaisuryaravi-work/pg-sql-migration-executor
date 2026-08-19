@@ -48,3 +48,6 @@ logs/
 # =========================
 .DS_Store
 Thumbs.db
+
+# Local application configuration
+appsettings.json
