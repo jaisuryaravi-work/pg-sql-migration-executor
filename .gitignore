@@ -27,6 +27,11 @@ target/
 logs/
 
 # =========================
+# Local application configuration
+# =========================
+appsettings.json
+
+# =========================
 # Generated / Build Files
 # =========================
 *.jar
@@ -36,6 +41,11 @@ logs/
 *.zip
 *.tar.gz
 *.rar
+
+# =========================
+# Generated distribution
+# =========================
+dist/
 
 # =========================
 # Temporary Files
@@ -48,6 +58,3 @@ logs/
 # =========================
 .DS_Store
 Thumbs.db
-
-# Local application configuration
-appsettings.json
