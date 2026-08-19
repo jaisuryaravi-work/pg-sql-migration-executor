@@ -30,6 +30,7 @@ logs/
 # Local application configuration
 # =========================
 appsettings.json
+db.properties
 
 # =========================
 # Generated / Build Files
