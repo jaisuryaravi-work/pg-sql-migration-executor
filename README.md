@@ -203,4 +203,4 @@ Dialect-specific behavior is abstracted via `DbDialect`, with implementations fo
 
 ## License
 
-Internal tool — add license terms as applicable.
+Internal tool — license not applicable.
