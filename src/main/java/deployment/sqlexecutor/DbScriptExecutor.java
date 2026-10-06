@@ -166,6 +166,7 @@ public class DbScriptExecutor {
 
 		// Summary list — collects result of every file
 		List<FileSummary> summaryList = new ArrayList<>();
+		boolean fatalError = false;
 
 		try (Connection connection = DriverManager.getConnection(DbConfig.getDbUrl(), DbConfig.getDbUser(),
 				DbConfig.getDbPassword())) {
@@ -241,8 +242,8 @@ public class DbScriptExecutor {
 						stmtCount = 0;
 					}
 
-					if (!DbConfig.isPipelineMode()) {
-						FileMover.moveFile(file);
+					if (!DbConfig.isPipelineMode() || DbConfig.getTargetDir() != null) {
+					    FileMover.moveFile(file);
 					}
 
 				} catch (Exception ex) {
@@ -279,25 +280,31 @@ public class DbScriptExecutor {
 		} catch (Exception e) {
 			ExecutionLogger.log(ConsoleColor.RED + "[ERROR] Execution stopped due to error" + ConsoleColor.RESET);
 			ExecutionLogger.logException(e);
+			fatalError = true;
 
 		} finally {
 
 			// Always print summary — even on error
 			printExecutionSummary(summaryList);
 
-			// ← ADD THIS — prints AFTER summary, always
+			// ← prints AFTER summary, always
 			boolean allSuccess = summaryList.stream().noneMatch(s -> s.status.equals("FAILED"));
+			boolean hasFailure = fatalError || !allSuccess;
 
-			if (allSuccess && !summaryList.isEmpty()) {
-				System.out.println(
-						ConsoleColor.GREEN + "===== All Scripts Executed Successfully =====" + ConsoleColor.RESET);
-			} else if (!summaryList.isEmpty()) {
-				System.out
-						.println(ConsoleColor.RED + "===== Execution Completed With Errors =====" + ConsoleColor.RESET);
+			if (!hasFailure && !summaryList.isEmpty()) {
+			    System.out.println(
+			            ConsoleColor.GREEN + "===== All Scripts Executed Successfully =====" + ConsoleColor.RESET);
+			} else if (hasFailure) {
+			    System.out
+			            .println(ConsoleColor.RED + "===== Execution Completed With Errors =====" + ConsoleColor.RESET);
 			}
 
 			if (!DbConfig.isPipelineMode()) {
-				waitForUser();
+			    waitForUser();
+			}
+
+			if (hasFailure) {
+			    System.exit(1);
 			}
 		}
 	}
